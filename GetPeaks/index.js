@@ -1,17 +1,28 @@
+const MongoClient = require('mongodb').MongoClient;
+const auth = require('../shared/index');
+
 module.exports = function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
-
-    if (req.query.name || (req.body && req.body.name)) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
-    }
-    else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
-    context.done();
+    MongoClient.connect(
+      process.env.CosmosDBURL,
+      { auth: auth },
+      (err, database) => {
+        if (err) throw err;
+        console.log('Connected succesfully');
+        const db = database.db(process.env.CosmosDB);
+        db
+          .collection('Peaks')
+          .find()
+          .toArray((err, result) => {
+            if (err) throw err;
+            context.log('This is a what it is.');
+            result.forEach(peak => delete peak._id);
+            context.res = {
+              //status: 200,
+              body: result
+            };
+            database.close();
+            context.done();
+          });
+      });
 };
