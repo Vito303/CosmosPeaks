@@ -11,7 +11,7 @@ module.exports = function (context, req) {
         console.log('Connected succesfully');
         const db = database.db(process.env.CosmosDB);
         db
-          .collection('Peaks')
+          .collection('peaks')
           .find()
           .toArray((err, result) => {
             if (err) throw err;

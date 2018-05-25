@@ -18,6 +18,8 @@ project.lock.json
 /App_Data
 /secrets
 /data
+/node_modules
 .secrets
 appsettings.json
 local.settings.json
+
